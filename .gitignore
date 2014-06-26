@@ -1,0 +1,7 @@
+*~
+*#
+.DS_STORE
+.netbeans
+nbproject
+.idea
+test_data.json
