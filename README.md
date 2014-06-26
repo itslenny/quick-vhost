@@ -3,10 +3,15 @@ quick-vhost
 
 A simple bash script to quickly create a virtual host config file for Apache and Nginx. Also, creates the main document root and a static document root (public sub directory) served by Nginx directly.
 
-This script was created for a very specific purpose, but could probably be easily configured for other purposes. The setup it's meant for is a host computer running multiple websites on using Apache running inside of a docker container and using Nginx to route requests. It also automatically creates a static subdomain that can be used for bypassing Apache for static content.
+This script was created for a very specific purpose, but could probably be easily configured for other purposes. The setup it's intended for is a host computer serving multiple PHP websites through Apache running inside of a Docker container and using Nginx to route requests. It also automatically creates a static subdomain that can be used for bypassing Apache for static content.
+
+
 
 **SETUP**
+
 Simply edit the configuration directories at the top of the main .sh file and customize the templates in the template directory as needed.
+
+
 
 **EXAMPLE USAGE**
 ```
