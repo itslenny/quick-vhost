@@ -3,7 +3,9 @@
 #BASIC CONFIG -- paths should end with a /
 
 #location where virtual domain document roots should be stored
-APACHE_DOCUMENT_DIR="/var/www/vhosts/"
+HOST_DOCUMENT_DIR="/var/www/vhosts"
+#location where nginx loads static content
+CONTAINER_DOCUMENT_DIR="/var/www/vhosts/"
 #apache config directory include from base httpd / apache conf
 APACHE_VHOST_DIR="/etc/httpd/vhosts/"
 #ninx vhost config directory
@@ -16,7 +18,7 @@ TEMPLATE_DIR="$SCRIPT_DIR/templates/"
 
 #check the config directories
 [ ! -d $APACHE_VHOST_DIR ] && echo "APACHE_VHOST_DIR not found. Check Configuration" && exit -1
-[ ! -d $APACHE_DOCUMENT_DIR ] && echo "APACHE_DOCUMENT_DIR not found. Check Configuration" && exit -1
+[ ! -d $HOST_DOCUMENT_DIR ] && echo "HOST_DOCUMENT_DIR not found. Check Configuration" && exit -1
 [ ! -d $NGINX_VHOST_DIR ] && echo "NGINX_VHOST_DIR not found. Check Configuration" && exit -1
 
 
@@ -28,22 +30,22 @@ if [ -f "$APACHE_VHOST_DIR$1.conf" ] || [ -f "$NGINX_VHOST_DIR$1" ]
     else
         #create apache conf
         echo "Creating apache vhost conf"
-        sed -e "s;%VHOST%;$1;g" -e "s;%DOCROOT%;$APACHE_DOCUMENT_DIR$1;g" "${TEMPLATE_DIR}apache_template.conf" > "$APACHE_VHOST_DIR$1.conf"
+        sed -e "s;%VHOST%;$1;g" -e "s;%DOCROOT%;$CONTAINER_DOCUMENT_DIR$1;g" "${TEMPLATE_DIR}apache_template.conf" > "$APACHE_VHOST_DIR$1.conf"
         #create nginx conf
-        echo "Creating apache nginx conf"
-        sed -e "s;%VHOST%;$1;g" -e "s;%DOCROOT%;$APACHE_DOCUMENT_DIR$1;g" "${TEMPLATE_DIR}nginx_template.conf" > "$NGINX_VHOST_DIR$1"
+        echo "Creating nginx vhost conf"
+        sed -e "s;%VHOST%;$1;g" -e "s;%DOCROOT%;$HOST_DOCUMENT_DIR$1;g" "${TEMPLATE_DIR}nginx_template.conf" > "$NGINX_VHOST_DIR$1"
         
         #check for the document root
-        if [ -d "$APACHE_DOCUMENT_DIR$1" ]
+        if [ -d "$HOST_DOCUMENT_DIR$1" ]
             then
-                echo "ERROR: Apache document root already exists"
+                echo "ERROR: HOST_DOCUMENT_DIR/$1 document root already exists"
             else
                 echo "Creating apache document root"
-                mkdir "$APACHE_DOCUMENT_DIR$1"
+                mkdir "$HOST_DOCUMENT_DIR$1"
                 echo "Creating static document root"
-                mkdir "$APACHE_DOCUMENT_DIR$1/public"
+                mkdir "$HOST_DOCUMENT_DIR$1/public"
                 echo "Creating placeholder indexes"
-                cp "${TEMPLATE_DIR}index.html" "$APACHE_DOCUMENT_DIR$1"
-                cp "${TEMPLATE_DIR}index.html" "$APACHE_DOCUMENT_DIR$1/public"                
+                cp "${TEMPLATE_DIR}index.html" "$HOST_DOCUMENT_DIR$1"
+                cp "${TEMPLATE_DIR}index.html" "$HOST_DOCUMENT_DIR$1/public"                
         fi
 fi
